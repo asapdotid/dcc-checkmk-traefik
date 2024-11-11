@@ -4,3 +4,15 @@
 #       loadBalancer:
 #         servers:
 #           - url: http://192.168.0.1
+
+http:
+  services:
+    cmkWebService:
+      loadBalancer:
+        servers:
+          - url: http://checkmk:5000
+
+    cmkAgentService:
+      loadBalancer:
+        servers:
+          - url: http://checkmk:8000

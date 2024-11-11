@@ -1,6 +1,7 @@
 # For local builds we always want to use "latest" as tag per default
 TAG:=latest
 
+
 # Enable buildkit for docker and docker-compose by default for every environment.
 # For specific environments (e.g. MacBook with Apple Silicon M1 CPU) it should be turned off to work stable
 # - this can be done in the .make/.env file
@@ -12,10 +13,9 @@ export DOCKER_BUILDKIT
 
 # Container names
 ## must match the names used in the docker-composer.yml files
-DOCKER_SERVICE_NAME_DOCKER_SOCKET:=dockersocket
+DOCKER_SERVICE_NAME_DOCKER_PROXY:=dockersocket
 DOCKER_SERVICE_NAME_TRAEFIK:=traefik
 DOCKER_SERVICE_NAME_LOGGER:=logger
-DOCKER_SERVICE_NAME_CHECKMK:=checkmk
 
 # FYI:
 # Naming convention for images is $(DOCKER_REGISTRY)/$(DOCKER_NAMESPACE)/$(DOCKER_SERVICE_NAME)-$(ENV)
@@ -35,7 +35,7 @@ DOCKER_COMPOSE_FILE_ENV:=$(DOCKER_COMPOSE_DIR)/compose.local.yml
 DOCKER_COMPOSE_COMMAND:= \
     DOCKER_REGISTRY=$(DOCKER_REGISTRY) \
     DOCKER_NAMESPACE=$(DOCKER_NAMESPACE) \
-    SOCKET_PROXY_VERSION=$(SOCKET_PROXY_VERSION) \
+    DOCKER_PROXY_VERSION=$(DOCKER_PROXY_VERSION) \
     TRAEFIK_VERSION=$(TRAEFIK_VERSION) \
     ALPINE_VERSION=$(ALPINE_VERSION) \
     CHECKMK_VERSION=$(CHECKMK_VERSION) \
@@ -66,9 +66,8 @@ endif
 ifeq ($(EXECUTE_IN_CONTAINER),true)
 	EXECUTE_IN_ANY_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME)
     EXECUTE_IN_TRAEFIK_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_TRAEFIK)
-	EXECUTE_IN_DOCKER_SOCKET_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_DOCKER_SOCKET)
+	EXECUTE_IN_DOCKER_SOCKET_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_DOCKER_PROXY)
 	EXECUTE_IN_LOGGER_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_LOGGER)
-	EXECUTE_IN_CHECKMK_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_CHECKMK)
 endif
 
 ##@ [Docker]

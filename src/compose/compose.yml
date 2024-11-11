@@ -1,13 +1,13 @@
 ---
 services:
-  dockersocket:
-    image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-proxy-local:${TAG?}
+  dockerproxy:
+    image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-proxy-local:${TAG?}
     build:
       context: ${CURDIR}/src/
-      dockerfile: ./images/docker-socket-proxy/Dockerfile
+      dockerfile: ./images/docker-proxy/Dockerfile
       target: local
       args:
-        - SOCKET_PROXY_VERSION=${SOCKET_PROXY_VERSION?}
+        - DOCKER_PROXY_VERSION=${DOCKER_PROXY_VERSION?}
 
   traefik:
     image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/traefik-local:${TAG?}
@@ -62,3 +62,11 @@ services:
       args:
         - ALPINE_VERSION=${ALPINE_VERSION?}
         - TIMEZONE=${TIMEZONE?}
+
+  checkmk:
+    image: ${DOCKER_REGISTRY?}/checkmk/check-mk-raw:${CHECKMK_VERSION?}
+    environment:
+      - TZ=${TIMEZONE:-Asia/Jakarta}
+      - CMK_PASSWORD=${CHECKMK_ADMIN_PASSWORD?}
+      - CMK_SITE_ID=${CHECKMK_SITE_ID?}
+      - CMK_LIVESTATUS_TCP=on

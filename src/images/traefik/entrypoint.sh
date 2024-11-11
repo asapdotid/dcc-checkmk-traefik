@@ -28,7 +28,7 @@ fi
 if [ -f "$__TRAEFIK_CONFIG_FILE" ]; then
   yq eval \
     'with(.entryPoints.https.http.tls; .domains = [{"main": "'$TRAEFIK_DOMAIN_NAME'", "sans": ["*.'$TRAEFIK_DOMAIN_NAME'"]}]) |
-    with(.entryPoints.cmkAgent.http.tls; .domains = [{"main": "'$TRAEFIK_DOMAIN_NAME'", "sans": ["*.'$TRAEFIK_DOMAIN_NAME'"]}]) |
+    with(.entryPoints.agentHttps.http.tls; .domains = [{"main": "'$TRAEFIK_DOMAIN_NAME'", "sans": ["*.'$TRAEFIK_DOMAIN_NAME'"]}]) |
     with(.certificatesResolvers.letsEncrypt.acme; .email = "'$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER_EMAIL'") |
     with(.certificatesResolvers.letsEncrypt.acme.dnsChallenge; .provider = "'$TRAEFIK_ACME_DNS_CHALLENGE_PROVIDER'") |
     with(.api; .dashboard = '$TRAEFIK_DASHBOARD') |
