@@ -10,9 +10,9 @@ http:
     cmkWebService:
       loadBalancer:
         servers:
-          - url: http://checkmk:5000
+          - url: "http://checkmk:5000"
 
     cmkAgentService:
       loadBalancer:
         servers:
-          - url: http://checkmk:8000
+          - url: "http://checkmk:8000"

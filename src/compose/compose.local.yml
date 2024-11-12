@@ -1,12 +1,12 @@
 ---
 networks:
-  proxynet:
-    name: proxynet
-  securenet:
-    name: securenet
+  net-exposed: # only network with internet access (able to expose ports on the host)
+    name: net-exposed
+  net-internal:
+    name: net-internal
 
 services:
-  dockerproxy:
+  dockersocket:
     restart: unless-stopped
     environment:
       - AUTH=0
@@ -40,17 +40,14 @@ services:
     tmpfs:
       - /run
     networks:
-      - securenet
+      - net-internal
 
   traefik:
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    volumes:
-      - ${CURDIR}/.data/traefik/ssl/:/etc/traefik/ssl/
-      - ${CURDIR}/.logs/traefik/:/var/log/traefik/
     environment:
-      - DOCKER_HOST=dockerproxy
+      - DOCKER_HOST=dockersocket
     ports:
       - target: 80
         published: ${TRAEFIK_HOST_HTTP_PORT:-80}
@@ -64,11 +61,14 @@ services:
         published: ${TRAEFIK_HOST_AGENT_HTTPS_PORT:-9443}
         protocol: tcp
         mode: host
+    volumes:
+      - ${CURDIR}/.data/traefik/ssl/:/etc/traefik/ssl/
+      - ${CURDIR}/.logs/traefik/:/var/log/traefik/
     networks:
-      - securenet
-      - proxynet
+      - net-exposed
+      - net-internal
     depends_on:
-      - dockerproxy
+      - dockersocket
 
   logger:
     restart: unless-stopped
@@ -77,7 +77,7 @@ services:
     volumes:
       - ${CURDIR}/.logs/traefik:/var/log/traefik
     networks:
-      - securenet
+      - net-internal
     depends_on:
       - traefik
 
@@ -92,13 +92,16 @@ services:
       nofile: 1024
     extra_hosts:
       - host.docker.internal:host-gateway
+    # ports:
+    #   - 5000
+    #   - 8000
     networks:
-      - securenet
+      - net-internal
     depends_on:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.docker.network=securenet
+      - traefik.docker.network=net-internal
       - traefik.http.routers.checkmk.rule=Host(`${CHECKMK_DOMAIN_NAME}`)
       - traefik.http.routers.checkmk.service=cmkWebService@file
       - traefik.http.routers.checkmk.entrypoints=https

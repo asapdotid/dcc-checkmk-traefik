@@ -1,13 +1,13 @@
 ---
 services:
-  dockerproxy:
-    image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-proxy-local:${TAG?}
+  dockersocket:
+    image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/docker-socket-local:${TAG?}
     build:
       context: ${CURDIR}/src/
-      dockerfile: ./images/docker-proxy/Dockerfile
+      dockerfile: ./images/docker-socket/Dockerfile
       target: local
       args:
-        - DOCKER_PROXY_VERSION=${DOCKER_PROXY_VERSION?}
+        - DOCKER_SOCKET_VERSION=${DOCKER_SOCKET_VERSION?}
 
   traefik:
     image: ${DOCKER_REGISTRY?}/${DOCKER_NAMESPACE?}/traefik-local:${TAG?}
